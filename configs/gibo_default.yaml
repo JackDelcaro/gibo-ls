@@ -1,0 +1,55 @@
+method: vdp-gibo
+
+max_iterations: null
+max_objective_calls: 30
+
+set_hypers: true
+only_set_noise_hyper: false
+
+save_process: false
+out_filename: null
+
+optimizer_config:
+  marginal_likelihood: null
+  max_samples_per_iteration: null
+  num_samples_before_gp_training: 5
+  OptimizerTorch: sgd
+  optimizer_torch_config: {lr: 0.5}
+  lr_schedular: null
+  Model: derivative_gp
+  model_config: {prior_mean: 0.0, ard_num_dims: null, N_max: 10, N_max_nan: 3, lengthscale_constraint: null,
+    lengthscale_hyperprior: null, outputscale_constraint: null, outputscale_hyperprior: null,
+    noise_constraint: {constraint: greater_than, kwargs: {lower_bound: 0.5E-4}}, noise_hyperprior: null,
+    input_transform: standardize, outcome_transform: standardize}
+  objfcn_input_scaling_coeffs: null
+  opt_bounds: null
+  hyperparameter_config:
+    optimize_hyperparameters: true
+    hypers: {covar_module.base_kernel_lengthscale: null, covar_module.outputscale: null,
+      likelihood.noise: 1.0E-4}
+    no_noise_optimization: false
+    no_mean_optimization: true
+  optimize_acqf: botorch-opt-acqf
+  optimize_acqf_config: {q: 1, num_restarts: 5, raw_samples: 100, delta: 0.2}
+  epsilon_diff_acq_value: 0.1
+  generate_initial_data: lhs
+  generate_initial_data_config: {bounds: null, num_samples: 20, start_from_init_best: true}
+  standard_deviation_scaling: false
+  normalize_gradient: false
+  verbose: true
+  vdp_config: {active: true, method: ucb, beta: 2.0}
+  lin_search_routine: 1DGP
+  lin_search_routine_config: {max_evaluations: 4,
+                              n_seed: 2,
+                              t_min_diff: 0.05,
+                              acquisition_function: ucb,
+                              acqf_config: {beta: 2.0},
+                              optimize_acqf: botorch-opt-acqf,
+                              optimize_acqf_config: {q: 1, num_restarts: 5, raw_samples: 64},
+                              optimize_hyperparameters: false,
+                              verbose: true,
+                              enable_plotting: false,
+                              lr_multiplier: 0.75,
+                              delta_min: 0.05,
+                              }
+  terminal_condition: {lr_below: 0.05}
