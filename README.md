@@ -16,4 +16,6 @@ Run python file [simple_optimization_example](./simple_optimization_example.py) 
 ![Demo animation](./data/saved_animation.gif)
 
 [plot_GP_example](./plot_GP_example.py) shows how the virtual and feasible GPs work for a 1D toy example.
-![GP example](./data/GIBO_example.png)
+<p align="center">
+  <img src="./data/GIBO_example.png" alt="GP example" width="500" />
+</p>
