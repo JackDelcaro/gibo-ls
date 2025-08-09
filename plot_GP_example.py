@@ -72,7 +72,8 @@ with torch.no_grad(), gpytorch.settings.fast_pred_samples(), gpytorch.settings.p
 
     X_plot = torch.linspace(0, 1, 200).unsqueeze(-1)
     X_samples = torch.rand(8).unsqueeze(-1) # Useless line, necessary to make a nice random posterior
-    X_samples = torch.tensor([[0.9810], [0.7798], [0.7798-0.075], [0.2337], [0.4789+0.1], [0.0314]])
+    # X_samples = torch.tensor([[0.9810], [0.7798], [0.7798-0.075], [0.2337], [0.4789+0.1], [0.0314]])
+    X_samples = torch.tensor([[0.87654+0.025], [0.7798], [0.7798-0.075], [0.2337], [0.4789+0.1], [-0.2]])
 
     prior_dist = onlyfeaspoints_model(torch.vstack([X_plot, X_samples]))
     f_tot = prior_dist.sample()
@@ -177,6 +178,8 @@ ax1.plot(X_plot.flatten().numpy(), feas_gp_post_mean.numpy(), color=colors[1], l
 ax1.fill_between(X_plot.flatten().numpy(), feas_gp_post_lower.numpy(), feas_gp_post_upper.numpy(), alpha=0.2, color=colors[1], label=r'Feas GP $2\cdot$std', zorder=0)
 ax1.scatter(feas_gp_allpoints_x[feas_gp_allpoints_x != X_samples[gi_current_point_idx]].flatten().numpy(), feas_gp_allpoints_y[(feas_gp_allpoints_x != X_samples[gi_current_point_idx]).flatten()].flatten().numpy(), color=colors[0], s=60, edgecolors=colors[1], linewidth=2, marker='o', label="Sampled pts", zorder=5)
 
+l = ax1.vlines(X_samples[gi_current_point_idx, 0].item(), -3, 3, linewidth=0.5, alpha=0.208, color=color_axes, label='_nolegend_', zorder=-2)
+l.set_linestyle((0, (6, 6)))
 
 ax1.tick_params(axis='both', which='major', labelsize=axes_fontsize)
 ax1.set_ylabel(r'$J(\theta)$', fontsize=labels_fontsize, color=color_axes)
@@ -195,6 +198,10 @@ ax2.fill_between([constr_position, constr_position + 1], [-20 -20], [+25 +25], a
 ax2.fill_between(X_plot.flatten().numpy(), virt_gp_post_der_lower.numpy(), virt_gp_post_der_upper.numpy(), alpha=0.3, color=colors[0], label=r"$\mathrm{Virt}\;\nabla\;GP\;2\cdot\mathrm{std}$", zorder=1)
 ax2.plot(X_plot.flatten().numpy(), virt_gp_post_der_mean.numpy(), color=colors[0], label=r"$\mathrm{Virt}\;\nabla\;GP\;\mathrm{mean}$", zorder=2)
 ax2.plot(X_plot.flatten().numpy(), der_f_plot.numpy(), 'k--', label='True fcn der', zorder=3)
+
+l = ax2.vlines(X_samples[gi_current_point_idx, 0].item(), -20, 30, linewidth=0.5, alpha=0.208, color=color_axes, label='_nolegend_', zorder=-2)
+l.set_linestyle((0, (6, 6)))
+
 ax2.tick_params(axis='both', which='major', labelsize=axes_fontsize)
 ax2.set_ylabel(r'$\nabla J(\theta)$', fontsize=labels_fontsize, color=color_axes)
 ax2.legend(ncol=3, loc='upper right', fontsize=legend_fontsize, handlelength=1.0, handletextpad=0.5, columnspacing=1.0)
@@ -218,6 +225,10 @@ ax3.plot(X_plot.flatten().numpy(), ei_acq_values_scaled.numpy(), '-', color=acqf
 ax3.plot(X_plot.flatten().numpy(), gi_acq_values_scaled.numpy(), '-', color=acqf_colors[1], label='Gradient Information', zorder=3)
 ax3.scatter(X_plot[ei_best_idx].flatten().numpy(), ei_acq_values_scaled[ei_best_idx].numpy(), marker='*', s=80, facecolors='white', edgecolors=acqf_colors[0], linewidths=1.5, label='_nolegend_', zorder=3)
 ax3.scatter(X_plot[gi_best_idx].flatten().numpy(), gi_acq_values_scaled[gi_best_idx].numpy(), marker='*', s=80, facecolors='white', edgecolors=acqf_colors[1], linewidths=1.5, label='_nolegend_', zorder=3)
+
+l = ax3.vlines(X_samples[gi_current_point_idx, 0].item(), -1, 2, linestyle='--', linewidth=0.5, alpha=0.208, color=color_axes, label='_nolegend_', zorder=-2)
+l.set_linestyle((0, (6, 6)))
+
 ax3.tick_params(axis='both', which='major', labelsize=axes_fontsize)
 ax3.set_ylabel('(scaled) acq fcn', fontsize=labels_fontsize, color=color_axes)
 ax3.set_xlabel(r'$\theta$', fontsize=labels_fontsize, color=color_axes)
@@ -232,5 +243,13 @@ for spine in ax3.spines.values():
 
 ax1.set_xlim((0, 1))
 plt.tight_layout(rect=[0,0,1,0.95])
+
+
+# fig.savefig(
+#     "data/GIBO_example.png",
+#     dpi=600,               # high resolution
+#     bbox_inches="tight",   # crop any extra whitespace
+#     pad_inches=0.1           # remove any padding around the axes
+# )
 
 plt.show()
